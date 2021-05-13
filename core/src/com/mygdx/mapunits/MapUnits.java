@@ -39,7 +39,7 @@ public class MapUnits extends ApplicationAdapter {
 	Vector3 touchPoint=new Vector3();
 	ArrayList<int[]> locations;
 	ArrayList<int[]> targets;
-	int[] price = new int[]{300};
+	int[] price = new int[]{0};
 	long startT = System.currentTimeMillis();
 	Enemy e;
 	@Override
@@ -168,20 +168,28 @@ public class MapUnits extends ApplicationAdapter {
 			}
 			shapes.rect(i.getPos()[0]*m.size,i.getPos()[1]*m.size,m.size,m.size);
 		}
-		/*if(e==null){
+		/*
+		if(e==null){
 			try{
-				e = new Enemy(new int[]{0,0},newAstar(new int[]{0,0}),w.get(0));
+				e = new Enemy(new int[]{0,0},newAstar(w.get(0).getPos()),w.get(0));
 				e.genPath();
 			}catch (Exception e){}
 		}else{
 			shapes.setColor(Color.RED);
 			shapes.rect(e.getPos()[0]*m.size,e.getPos()[1]*m.size,m.size,m.size);
-			if(System.currentTimeMillis()-startT>100){
-				//e.genPath();
-				startT=System.currentTimeMillis();
+			if(System.currentTimeMillis()-startT>20){
 				e.move();
+				startT=System.currentTimeMillis();
 			}
-		}*/
+			if(isClose(e.pos,e.target.pos)){
+				int[] pos = w.get(w.indexOf(e.target)).start;
+				m.getVals()[pos[0]][pos[1]].setType(0);
+				w.remove(w.indexOf(e.target));
+				e = null;
+				System.out.println("boop");
+			}
+		}
+		*/
 		for(Worker i:toBeRemoved){
 			w.remove(i);
 		}

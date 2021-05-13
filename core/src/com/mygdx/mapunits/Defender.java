@@ -2,21 +2,21 @@ package com.mygdx.mapunits;
 
 import com.badlogic.gdx.utils.IntArray;
 
-public class Enemy {
+public class Defender {
     int[] pos;
     Astar astar;
     Worker target;
     int pathIndex;
     IntArray path;
     boolean dir = true;
-    public Enemy(int[] pos, Astar astar, Worker target){
+    public Defender(int[] pos, Astar astar, Worker target){
         this.pos = pos;
         this.astar = astar;
         this.target = target;
         pathIndex=0;
     }
     public void genPath(){
-            path = astar.getPath(target.getPos()[0], target.getPos()[1],pos[0], pos[1]);
+        path = astar.getPath(target.getPos()[0], target.getPos()[1],pos[0], pos[1]);
     }
     public void move(){
         if(path.size/2<pathIndex){
@@ -31,6 +31,8 @@ public class Enemy {
             pathIndex+=2;
             pos = new int[]{x,y};
         }
+    }
+    public void wander(MapGen m){
     }
 
     public int[] getPos() {
