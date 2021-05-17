@@ -12,8 +12,10 @@ public class Defender {
     IntArray path;
     int[] targetPos;
     boolean dir = true;
+    long time;
     public Defender(int[] pos, Astar astar, Enemy target){
         this.pos = pos;
+        this.time = System.currentTimeMillis();
         this.astar = astar;
         this.target = target;
         pathIndex=0;
@@ -29,9 +31,16 @@ public class Defender {
         this.target=target;
     }
     public void move(MapGen m){
-        if(target==null&&path.size-1==pathIndex){
+        if(path==null&&targetPos==null){
             wander(m);
-        }else if(target==null){
+            genPathPos();
+        }else if(target==null&&path.size-1==pathIndex){
+            wander(m);
+            pathIndex=0;
+            genPathPos();
+        }else if(path.size/2<pathIndex&&target==null){
+            wander(m);
+            pathIndex=0;
             genPathPos();
         }else if(path.size/2<pathIndex){
             genPath();
@@ -45,17 +54,24 @@ public class Defender {
             pathIndex+=2;
             pos = new int[]{x,y};
         }
+        setTime(System.currentTimeMillis());
     }
     public void wander(MapGen m){
         Resource[][] vals = m.getVals();
         Random r = new Random();
         int i = r.nextInt(vals.length);
         int j = r.nextInt(vals[i].length);
-        while(!(i<vals.length/4||i>vals.length/4*3)||(j<vals[i].length/4||j>vals[i].length/4*3)){
+        while((i<vals.length/4||i>vals.length/4*3)||(j<vals[i].length/4||j>vals[i].length/4*3)){
             i = r.nextInt(vals.length);
             j = r.nextInt(vals[i].length);
         }
         targetPos = new int[]{i,j};
+    }
+    public long getTime(){
+        return time;
+    }
+    public void setTime(long l){
+        time = l;
     }
 
     public int[] getPos() {
