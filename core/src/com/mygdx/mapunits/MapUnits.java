@@ -23,6 +23,8 @@ public class MapUnits extends ApplicationAdapter {
 	ShapeRenderer shapes;
 	MapGen m;
 	ArrayList<Worker> w;
+	ArrayList<Enemy> e;
+	ArrayList<Defender> d;
 	int[] res;
 	Stage stage;
 	Dialog resMenu;
@@ -32,16 +34,15 @@ public class MapUnits extends ApplicationAdapter {
 	OrthographicCamera camera;
 	Skin skin;
 	boolean buttonClicked = false;
-	String[] items = {"type-1","type-2"};
+	String[] items = {"type-1","type-2","defender"};
 	TextArea[] resT;
 	ArrayList<Worker> toBeRemoved;
 	TextButton b;
 	Vector3 touchPoint=new Vector3();
 	ArrayList<int[]> locations;
 	ArrayList<int[]> targets;
-	int[] price = new int[]{0};
+	int[] price = new int[]{0,0};
 	long startT = System.currentTimeMillis();
-	Enemy e;
 	@Override
 	public void create () {
 		locations = new ArrayList<>();
@@ -93,6 +94,8 @@ public class MapUnits extends ApplicationAdapter {
 		Gdx.input.setInputProcessor(stage);
 		stage.addActor(resMenu);
 		stage.addActor(buildMenu);
+		e = new ArrayList<>();
+		d = new ArrayList<>();
 		//w.add(new Worker(new int[]{32,32},newAstar(),1));
 		//w.add(new Worker(new int[]{32,32},newAstar(),1));
 		//w.add(new Worker(new int[]{32,32},newAstar(),2));
@@ -115,7 +118,7 @@ public class MapUnits extends ApplicationAdapter {
 		}
 		shapes.end();
 		shapes.begin(ShapeRenderer.ShapeType.Line);
-		shapes.setColor(Color.BLUE);
+		shapes.setColor(Color.SKY);
 		float[] temp = new float[0];
 		for (int i = 0;i<lineSpots.size();i++){
 			temp = lineSpots.get(i);
@@ -168,33 +171,55 @@ public class MapUnits extends ApplicationAdapter {
 			}
 			shapes.rect(i.getPos()[0]*m.size,i.getPos()[1]*m.size,m.size,m.size);
 		}
-		/*
-		if(e==null){
-			try{
-				e = new Enemy(new int[]{0,0},newAstar(w.get(0).getPos()),w.get(0));
-				e.genPath();
-			}catch (Exception e){}
-		}else{
-			shapes.setColor(Color.RED);
-			shapes.rect(e.getPos()[0]*m.size,e.getPos()[1]*m.size,m.size,m.size);
-			if(System.currentTimeMillis()-startT>20){
-				e.move();
-				startT=System.currentTimeMillis();
-			}
-			if(isClose(e.pos,e.target.pos)){
-				int[] pos = w.get(w.indexOf(e.target)).start;
-				m.getVals()[pos[0]][pos[1]].setType(0);
-				w.remove(w.indexOf(e.target));
-				e = null;
-				System.out.println("boop");
-			}
-		}
-		*/
+
 		for(Worker i:toBeRemoved){
 			w.remove(i);
 		}
 		toBeRemoved.clear();
-		shapes.setColor(Color.PURPLE);
+		shapes.setColor(Color.BLUE);
+		for(Defender i : d){
+			if(System.currentTimeMillis()-i.getTime()>10) {
+				shapes.rect(i.pos[0] * m.size, i.pos[1] * m.size, m.size, m.size);
+				i.move(m);
+			}
+			if(i.target==null){
+				for(Enemy j : e){
+					System.out.println(true);
+					if(!j.isTarget) {
+						i.setTarget(j);
+						j.isTarget = true;
+						break;
+					}
+				}
+				i.genPath();
+			}
+			else if(i.target!=null){
+				if(isClose(i.pos,i.target.pos)){
+					e.remove(w.indexOf(i.target));
+					d.remove(d.indexOf(i));
+				}
+			}
+		}
+		shapes.setColor(Color.RED);
+		for(Enemy i : e){
+			if(i.path==null){
+				i.genPath();
+			}
+			if(System.currentTimeMillis()-i.getTime()>10) {
+				shapes.rect(i.pos[0] * m.size, i.pos[1] * m.size, m.size, m.size);
+				i.move();
+			}
+			if(isClose(i.pos,i.target.pos)){
+				int[] pos = w.get(w.indexOf(i.target)).start;
+				m.getVals()[pos[0]][pos[1]].setType(0);
+				w.remove(w.indexOf(i.target));
+				e.remove(e.indexOf(i));
+			}
+		}
+		if(System.currentTimeMillis()-startT>1000){
+			startT = System.currentTimeMillis();
+			e.add(new Enemy(new int[]{0,0},newAstar(new int[]{0,0}),w.get(0)));
+		}
 		shapes.end();
 		stage.draw();
 		stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
@@ -208,24 +233,37 @@ public class MapUnits extends ApplicationAdapter {
 			buttonClicked = true;
 		}
 		if(buttonClicked&&Gdx.input.justTouched()){
+			//create stuff
 			touchPoint.set(Gdx.input.getX(),Gdx.input.getY(),0);
 			int[] loc = closestBox(new float[]{touchPoint.x,touchPoint.y});
 			boolean valid = true;
-			for(int i = 0; i<locations.size()&&valid;i++){
-				if(locations.get(i)[0]==loc[0]&&locations.get(i)[1]==loc[1]){
-					valid = false;
+			if(selectBox.getSelectedIndex()==0||selectBox.getSelectedIndex()==1) {
+				for (int i = 0; i < locations.size() && valid; i++) {
+					if (locations.get(i)[0] == loc[0] && locations.get(i)[1] == loc[1]) {
+						valid = false;
+					}
 				}
-			}
-			if(valid && !cost(selectBox.getSelectedIndex()))valid=false;
-			if(valid){
-				locations.add(loc);
-				if(locations.size()>=2){
-					int[] target = closeNode(locations.get(locations.size()-1),-2);
-					lineSpots.put(lineSpots.size(),new float[]{locations.get(locations.size()-1)[0]
-							,locations.get(locations.size()-1)[1],target[0],target[1]});
+				if (valid && !cost(selectBox.getSelectedIndex())) valid = false;
+				if (valid) {
+					locations.add(loc);
+					if (locations.size() >= 2) {
+						int[] target = closeNode(locations.get(locations.size() - 1), -2);
+						lineSpots.put(lineSpots.size(), new float[]{locations.get(locations.size() - 1)[0]
+								, locations.get(locations.size() - 1)[1], target[0], target[1]});
+					}
+					m.getVals()[loc[0]][loc[1]].setType(-2);
+					w.add(new Worker(new int[]{loc[0], loc[1]}, newAstar(loc), selectBox.getSelectedIndex() + 1));
 				}
-				m.getVals()[loc[0]][loc[1]].setType(-2);
-				w.add(new Worker(new int[]{loc[0],loc[1]},newAstar(loc),selectBox.getSelectedIndex()+1));
+			}else if(selectBox.getSelectedIndex()==2){
+				for (int i = 0; i < locations.size() && valid; i++) {
+					if (locations.get(i)[0] == loc[0] && locations.get(i)[1] == loc[1]) {
+						valid = false;
+					}
+				}
+				if (valid && !cost(selectBox.getSelectedIndex())) valid = false;
+				if (valid) {
+					d.add(new Defender(loc,newAstar(loc),null));
+				}
 			}
 
 			buttonClicked = false;
@@ -277,7 +315,9 @@ public class MapUnits extends ApplicationAdapter {
 			return true;
 		}else if(in == 0&&res[0]>=price[0]){
 			res[0]-=price[0];
-
+			return true;
+		} else if (in == 2&&res[1]>=price[1]) {
+			res[1]-=price[1];
 			return true;
 		}
 		return false;
