@@ -9,8 +9,11 @@ public class Enemy {
     int pathIndex;
     IntArray path;
     boolean dir = true;
+    boolean isTarget = false;
+    long time;
     public Enemy(int[] pos, Astar astar, Worker target){
         this.pos = pos;
+        this.time = System.currentTimeMillis();
         this.astar = astar;
         this.target = target;
         pathIndex=0;
@@ -31,6 +34,12 @@ public class Enemy {
             pathIndex+=2;
             pos = new int[]{x,y};
         }
+    }
+    public long getTime(){
+        return time;
+    }
+    public void setTime(long l){
+        time = l;
     }
 
     public int[] getPos() {
