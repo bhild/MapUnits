@@ -111,7 +111,7 @@ public class MapUnits extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-		ScreenUtils.clear(1, 0, 0, 1);//clears the old drawings
+		ScreenUtils.clear(.5f,0.5f,0.5f, 1);//clears the old drawings
 
 		shapes.begin(ShapeRenderer.ShapeType.Filled);//this will be replaced when sprites are added
 		//allows stuff to be drawn
@@ -119,7 +119,7 @@ public class MapUnits extends ApplicationAdapter {
 		for(int i = 0; i<m.getVals().length;i++){
 			for(int j = 0;j<m.getVals()[i].length;j++){
 				shapes.setColor(m.getVals()[i][j].getColor());
-				shapes.rect(i*m.size,j*m.size, m.size, m.size);
+				//shapes.rect(i*m.size,j*m.size, m.size, m.size);
 				//m.size is the size of a square and will be used frequently to place objects on the grid
 			}
 		}
