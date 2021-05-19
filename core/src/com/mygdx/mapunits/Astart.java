@@ -1,9 +1,13 @@
+// A* for libgdx that is simple but optimized.
+
 package com.mygdx.mapunits;
 
 import com.badlogic.gdx.utils.BinaryHeap;
 import com.badlogic.gdx.utils.IntArray;
-
+/** @author Nathan Sweet */
 class Astar{
+    //not mine but made some changes
+    //not really clear on all of the details on how this works
     private int width;
     private int height;
     private final BinaryHeap<PathNode> open;
@@ -57,13 +61,13 @@ class Astar{
             int y = node.y;
             if (x < lastColumn) {
                 addNode(node, x + 1, y, 10);
-                if (y < lastRow) addNode(node, x + 1, y + 1, 10); // Diagonals cost more, roughly equivalent to sqrt(2).
-                if (y > 0) addNode(node, x + 1, y - 1, 10);
+                if (y < lastRow) addNode(node, x + 1, y + 1, 14); // Diagonals cost more, roughly equivalent to sqrt(2).
+                if (y > 0) addNode(node, x + 1, y - 1, 14);
             }
             if (x > 0) {
                 addNode(node, x - 1, y, 10);
-                if (y < lastRow) addNode(node, x - 1, y + 1, 10);
-                if (y > 0) addNode(node, x - 1, y - 1, 10);
+                if (y < lastRow) addNode(node, x - 1, y + 1, 14);
+                if (y > 0) addNode(node, x - 1, y - 1, 14);
             }
             if (y < lastRow) addNode(node, x, y + 1, 10);
             if (y > 0) addNode(node, x, y - 1, 10);
