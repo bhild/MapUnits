@@ -58,8 +58,9 @@ public class Defender {
             //calls wander to select a pos then makes a path
             //runs if the target pos is null
             wander(m);
+            pathIndex=0;
             genPathPos();
-        }else if(path.size-2==pathIndex){
+        }else if(path.size==pathIndex||pathIndex==path.size-2){
             //if the path length is reached makes a new path as describe above
             //then resets path index
             wander(m);
@@ -82,12 +83,12 @@ public class Defender {
         //if it is in the middle and not obstructed return that location
         Resource[][] vals = m.getVals();
         Random r = new Random();
-        int i = r.nextInt(vals.length);
-        int j = r.nextInt(vals[i].length);
-        while((i<vals.length/4||i>vals.length/4*3)||(j<vals[i].length/4||j>vals[i].length/4*3)){
-            i = r.nextInt(vals.length);
-            j = r.nextInt(vals[i].length);
-        }
+        int i = r.nextInt(vals.length/2)+vals.length/4;
+        int j = r.nextInt(vals[i].length/2)+vals[i].length/4;
+        //while((i<vals.length/4||i>vals.length/4*3)||(j<vals[i].length/4||j>vals[i].length/4*3)){
+        //    i = r.nextInt(vals.length);
+        //    j = r.nextInt(vals[i].length);
+        //}
         targetPos = new int[]{i,j};
     }
     public long getTime(){

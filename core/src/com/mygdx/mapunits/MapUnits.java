@@ -5,6 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -21,6 +23,8 @@ import java.util.Random;
 
 public class MapUnits extends ApplicationAdapter {
 	final HashMap<Integer, float[]> lineSpots = new HashMap<Integer, float[]>();//stores the lines
+	SpriteBatch batch;
+	Texture[] textures;
 	ShapeRenderer shapes;//this draws the envorment will be replaced when I have textures
 	MapGen m;//this creates the map
 	ArrayList<Worker> w;//the set of all workers
@@ -50,6 +54,12 @@ public class MapUnits extends ApplicationAdapter {
 	@Override
 	public void create () {
 		//initializing values
+		textures = new Texture[]{new Texture(Gdx.files.internal("sprites/res1.png")),new Texture(Gdx.files.internal("sprites/res2.png")),
+				new Texture(Gdx.files.internal("sprites/homeNode.png")),new Texture(Gdx.files.internal("sprites/defenderGen.png")),
+				new Texture(Gdx.files.internal("sprites/worker1U.png")),new Texture(Gdx.files.internal("sprites/worker1F.png"))
+				,new Texture(Gdx.files.internal("sprites/worker2U.png")),new Texture(Gdx.files.internal("sprites/worker2F.png")),
+				new Texture(Gdx.files.internal("sprites/defender.png")),new Texture(Gdx.files.internal("sprites/enemy.png"))};
+		batch = new SpriteBatch();
 		generators = new ArrayList<>();
 		enemyClear = new ArrayList<>();
 		defClear = new ArrayList<>();
@@ -113,17 +123,8 @@ public class MapUnits extends ApplicationAdapter {
 	public void render () {
 		ScreenUtils.clear(.5f,0.5f,0.5f, 1);//clears the old drawings
 
-		shapes.begin(ShapeRenderer.ShapeType.Filled);//this will be replaced when sprites are added
+		//shapes.begin(ShapeRenderer.ShapeType.Filled);//this will be replaced when sprites are added
 		//allows stuff to be drawn
-
-		for(int i = 0; i<m.getVals().length;i++){
-			for(int j = 0;j<m.getVals()[i].length;j++){
-				shapes.setColor(m.getVals()[i][j].getColor());
-				//shapes.rect(i*m.size,j*m.size, m.size, m.size);
-				//m.size is the size of a square and will be used frequently to place objects on the grid
-			}
-		}
-		shapes.end();
 		shapes.begin(ShapeRenderer.ShapeType.Line);
 		//this will not be replaced as it draws the lines -- needs rework soonish
 		shapes.setColor(Color.SKY);
@@ -133,12 +134,27 @@ public class MapUnits extends ApplicationAdapter {
 			shapes.line(temp[0]*m.size+m.size/2,temp[1]*m.size+m.size/2,temp[2]*m.size+m.size/2,temp[3]*m.size+m.size/2);
 		}
 		shapes.end();
-		shapes.begin(ShapeRenderer.ShapeType.Filled);//will be replace when textures are added
+		batch.begin();
+		for(int i = 0; i<m.getVals().length;i++){
+			for(int j = 0;j<m.getVals()[i].length;j++){
+				/*shapes.setColor(m.getVals()[i][j].getColor());
+				//shapes.rect(i*m.size,j*m.size, m.size, m.size);
+				//m.size is the size of a square and will be used frequently to place objects on the grid*/
+				if(m.getVals()[i][j].getType()==1||m.getVals()[i][j].getType()==2){
+					batch.draw(textures[m.getVals()[i][j].getType()-1],i*m.size,j*m.size,m.size,m.size);
+				}else if(m.getVals()[i][j].getType()==-2){
+					batch.draw(textures[2],i*m.size,j*m.size,m.size,m.size);
+				}else if(m.getVals()[i][j].getType()==-3){
+					batch.draw(textures[4],i*m.size,j*m.size,m.size,m.size);
+				}
+			}
+		}
+		//shapes.end();
 		for(Worker i : w){//for each worker in the set of workers
 			if(!i.hasGoal()){//if the worker is not mining from a resorse
 				getTarget(i);//this will be addressed later
 			}
-			if(System.currentTimeMillis()-i.getTime()>10){//this makes the worker move
+			if(System.currentTimeMillis()-i.getTime()>50){//this makes the worker move
 				//each worker has an internal timer every 10ish milliseconds the worker moves
 				//the timer starts when the worker is created
 				i.move();//calls the workers internal move function
@@ -182,21 +198,25 @@ public class MapUnits extends ApplicationAdapter {
 			//this will be reworked when sprites are added
 			//this displayes the workers color
 			if(i.res==1 && i.hasRes){
-				shapes.setColor(Color.CYAN);
+				//shapes.setColor(Color.CYAN);
+				batch.draw(textures[5],i.pos[0]*m.size,i.pos[1]*m.size,m.size,m.size);
 			}else if(i.res==2 &&i.hasRes){
-				shapes.setColor(Color.LIME);
+				//shapes.setColor(Color.LIME);
+				batch.draw(textures[7],i.pos[0]*m.size,i.pos[1]*m.size,m.size,m.size);
 			}else if(i.res==1){
-				shapes.setColor(Color.BROWN);
+				//shapes.setColor(Color.BROWN);
+				batch.draw(textures[4],i.pos[0]*m.size,i.pos[1]*m.size,m.size,m.size);
 			}else if(i.res==2){
-				shapes.setColor(Color.YELLOW);
+				//shapes.setColor(Color.YELLOW);
+				batch.draw(textures[6],i.pos[0]*m.size,i.pos[1]*m.size,m.size,m.size);
 			}
 			//and this its position
-			shapes.rect(i.getPos()[0]*m.size,i.getPos()[1]*m.size,m.size,m.size);
+			//shapes.rect(i.getPos()[0]*m.size,i.getPos()[1]*m.size,m.size,m.size);
 		}
-		shapes.setColor(Color.VIOLET);
+
 		for(Defender i : d){//the previous loop but for defenders
-			shapes.rect(i.pos[0] * m.size, i.pos[1] * m.size, m.size, m.size);//sets the location on the screen
-			if(System.currentTimeMillis()-i.getTime()>5) {//runs the movement ai every n mills
+			batch.draw(textures[8],i.pos[0]*m.size,i.pos[1]*m.size,m.size,m.size);//sets the location on the screen
+			if(System.currentTimeMillis()-i.getTime()>50) {//runs the movement ai every n mills
 				if(i.target==null&&e.size()>0){//the defenders can be targeted or not
 					//this handels the no target wandering
 					for(Enemy j : e){//tries to get a target
@@ -226,11 +246,11 @@ public class MapUnits extends ApplicationAdapter {
 		//System.out.println();
 		shapes.setColor(Color.RED);
 		for(Enemy i : e){
-			shapes.rect(i.pos[0] * m.size, i.pos[1] * m.size, m.size, m.size);
+			batch.draw(textures[9],i.pos[0]*m.size,i.pos[1]*m.size,m.size,m.size);
 			if(i.path==null){
 				i.genPath();//if this enemy has no path make one
 			}
-			if(System.currentTimeMillis()-i.getTime()>20) {
+			if(System.currentTimeMillis()-i.getTime()>100) {
 				i.move();//move every n mills
 			}
 			if(w.contains(i.target)){//functions the same as the one for defenders
@@ -245,6 +265,7 @@ public class MapUnits extends ApplicationAdapter {
 				i.target = w.get(new Random().nextInt(w.size()));//if the target is gone get a new one
 			}
 		}
+		batch.end();
 		for(DefenderGenerator i : generators){
 			if(i.attemptGen(res[1],price[1])){//for each generator see if it can generate
 				d.add(new Defender(i.location,newAstar(i.location),null));//if it can add a defender
@@ -339,7 +360,7 @@ public class MapUnits extends ApplicationAdapter {
 				//these do not get a line untill the line rework
 				if (valid) {
 					m.getVals()[loc[0]][loc[1]].setType(-3);//sets its location to be filled
-					generators.add(new DefenderGenerator(100,loc));//makes a new defender generator
+					generators.add(new DefenderGenerator(1500,loc));//makes a new defender generator
 				}
 			}
 

@@ -9,7 +9,7 @@ import java.util.Random;
 
 public class MapGen {
     private Resource[][] vals;//this is the map arary
-    int size  = 3;
+    int size  = 20;
     public MapGen(){
         vals = new Resource[Gdx.graphics.getWidth()/size][Gdx.graphics.getHeight()/size];
         for(int i = 0; i< Gdx.graphics.getWidth()/size; i++){

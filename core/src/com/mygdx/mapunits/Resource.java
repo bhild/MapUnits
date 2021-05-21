@@ -17,7 +17,7 @@ public class Resource {
             //the number of times a worker can mine this
             //they work in 3s so it goes from 15 to 45 times
         }
-        setColor();
+        //setColor();
     }
     public void reduce(int amount){
         resorseCount-=amount;
@@ -28,7 +28,7 @@ public class Resource {
     public void setType(int type){
         this.type = type;//sets the type of resorse
     }
-    private void setColor(){//will be updated later
+    /*private void setColor(){//will be updated later
         //retruns the color the node should be on the map
         if(type==1){color=Color.GOLD;}
         else if(type==2){color = Color.BLUE;}
@@ -36,9 +36,9 @@ public class Resource {
         else if(type==-3)color=Color.PINK;
         else
             color=Color.GRAY;//default color
-    }
+    }*/
     public int getType(){return type;}
-    public Color getColor(){setColor();return color;}
+    //public Color getColor(){setColor();return color;}
     public boolean equals(Resource r){//not used, determines of one res type equals another
         if(this.type == r.getType()){
             return true;
