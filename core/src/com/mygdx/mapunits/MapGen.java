@@ -10,7 +10,8 @@ import java.util.Random;
 public class MapGen {
     private Resource[][] vals;//this is the map arary
     int size  = 20;
-    public MapGen(){
+    public MapGen(int s){
+        size = s;
         vals = new Resource[Gdx.graphics.getWidth()/size][Gdx.graphics.getHeight()/size];
         for(int i = 0; i< Gdx.graphics.getWidth()/size; i++){
             for(int j = 0;j< Gdx.graphics.getHeight()/size;j++){

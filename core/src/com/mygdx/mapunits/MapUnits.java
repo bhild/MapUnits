@@ -51,6 +51,13 @@ public class MapUnits extends ApplicationAdapter {
 	ArrayList<Defender> defClear;//same function as toBeRemoved but for defenders
 	int difficulty = 0;//how fast the enemies spawn
 	ArrayList<DefenderGenerator> generators;//the set of defender generators
+	int speed;
+	int size;
+	public MapUnits(ArrayList<Integer> r){
+		size = r.get(0);
+		speed = r.get(1);
+		price = new int[]{10*r.get(2),100*r.get(2)};
+	}
 	@Override
 	public void create () {
 		//initializing values
@@ -75,9 +82,9 @@ public class MapUnits extends ApplicationAdapter {
 		res[0]=price[0];
 		resT[0] = new TextArea("type1 - "+res[0],skin);
 		resT[1] = new TextArea("type2 - "+res[1],skin);
-		m = new MapGen();
 		shapes = new ShapeRenderer();
 		w = new ArrayList<Worker>();
+		m = new MapGen(size);
 		stage = new Stage(viewport);
 		selectBox =new SelectBox<String>(skin);
 		resMenu=new Dialog("resources",skin){		};
@@ -154,7 +161,7 @@ public class MapUnits extends ApplicationAdapter {
 			if(!i.hasGoal()){//if the worker is not mining from a resorse
 				getTarget(i);//this will be addressed later
 			}
-			if(System.currentTimeMillis()-i.getTime()>50){//this makes the worker move
+			if(System.currentTimeMillis()-i.getTime()>speed){//this makes the worker move
 				//each worker has an internal timer every 10ish milliseconds the worker moves
 				//the timer starts when the worker is created
 				i.move();//calls the workers internal move function
@@ -216,7 +223,7 @@ public class MapUnits extends ApplicationAdapter {
 
 		for(Defender i : d){//the previous loop but for defenders
 			batch.draw(textures[8],i.pos[0]*m.size,i.pos[1]*m.size,m.size,m.size);//sets the location on the screen
-			if(System.currentTimeMillis()-i.getTime()>50) {//runs the movement ai every n mills
+			if(System.currentTimeMillis()-i.getTime()>speed) {//runs the movement ai every n mills
 				if(i.target==null&&e.size()>0){//the defenders can be targeted or not
 					//this handels the no target wandering
 					for(Enemy j : e){//tries to get a target
@@ -250,7 +257,7 @@ public class MapUnits extends ApplicationAdapter {
 			if(i.path==null){
 				i.genPath();//if this enemy has no path make one
 			}
-			if(System.currentTimeMillis()-i.getTime()>100) {
+			if(System.currentTimeMillis()-i.getTime()>speed+(speed/2)) {
 				i.move();//move every n mills
 			}
 			if(w.contains(i.target)){//functions the same as the one for defenders
@@ -258,6 +265,7 @@ public class MapUnits extends ApplicationAdapter {
 					int[] pos = w.get(w.indexOf(i.target)).start;//this clears the home of the worker
 					m.getVals()[pos[0]][pos[1]].setType(0);
 					locations.remove(w.indexOf(i.target));
+					m.getVals()[i.target.getGoal()[0]][i.target.getGoal()[1]].workers--;
 					w.remove(w.indexOf(i.target));
 					enemyClear.add(i);
 				}
