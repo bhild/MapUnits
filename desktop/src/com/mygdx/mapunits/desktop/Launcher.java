@@ -18,20 +18,24 @@ public class Launcher extends JFrame {
         for(int i = 0;i<texts.length;i++){
             texts[i] = new JTextArea();
             texts[i].setSize(80,30);
-            if(i%2==0){
+            if(i%2==0) {
                 texts[i].setEditable(false);
-                if(i==0){
-                    texts[i].setText("Game Size");
-                }
-                else if(i==2){
-                    texts[i].setText("Game Speed");
-                }
-                else if(i==4){
-                    texts[i].setText("Cost Scaling");
-                }
                 texts[i].setLocation(5,i*20+5);
             }else{
                 texts[i].setLocation(100,(i-1)*20+5);
+            }
+            if(i==0){
+                texts[0].setText("Game Size");
+            }else if(i==1){
+                texts[1].setText("3");
+            }else if(i==2){
+                texts[2].setText("Game Speed");
+            }else if(i==3){
+                texts[3].setText("50");
+            }else if(i==4){
+                texts[4].setText("Cost Scaling");
+            }else if(i==5){
+                texts[5].setText("0");
             }
             this.add(texts[i]);
         }

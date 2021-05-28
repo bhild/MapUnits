@@ -144,9 +144,9 @@ public class MapUnits extends ApplicationAdapter {
 		batch.begin();
 		for(int i = 0; i<m.getVals().length;i++){
 			for(int j = 0;j<m.getVals()[i].length;j++){
-				/*shapes.setColor(m.getVals()[i][j].getColor());
+				//shapes.setColor(m.getVals()[i][j].getColor());
 				//shapes.rect(i*m.size,j*m.size, m.size, m.size);
-				//m.size is the size of a square and will be used frequently to place objects on the grid*/
+				//m.size is the size of a square and will be used frequently to place objects on the grid
 				if(m.getVals()[i][j].getType()==1||m.getVals()[i][j].getType()==2){
 					batch.draw(textures[m.getVals()[i][j].getType()-1],i*m.size,j*m.size,m.size,m.size);
 				}else if(m.getVals()[i][j].getType()==-2){
@@ -368,7 +368,7 @@ public class MapUnits extends ApplicationAdapter {
 				//these do not get a line untill the line rework
 				if (valid) {
 					m.getVals()[loc[0]][loc[1]].setType(-3);//sets its location to be filled
-					generators.add(new DefenderGenerator(1500,loc));//makes a new defender generator
+					generators.add(new DefenderGenerator(1500,loc,50));//makes a new defender generator
 				}
 			}
 
