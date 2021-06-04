@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -39,7 +40,7 @@ public class MapUnits extends ApplicationAdapter {
 	OrthographicCamera camera;//used for resizing based on monitor size
 	Skin skin;//this is for the dialogs and dropdowns
 	boolean buttonClicked = false;//used to see if a click will build something
-	String[] items = {"type-1","type-2","defender","defenderGen"};//this is what the dropdown displays
+	String[] items = {"yellow-W","blue-W","defender","defenderGen"};//this is what the dropdown displays
 	TextArea[] resT;//these are the textboxes used to display the resource counts
 	ArrayList<Worker> toBeRemoved;//stores workers the need to be removed
 	TextButton b;//this is the create button
@@ -53,13 +54,20 @@ public class MapUnits extends ApplicationAdapter {
 	ArrayList<DefenderGenerator> generators;//the set of defender generators
 	int speed;
 	int size;
+	int defAIType;
+	int difScale;
+	int typeCount;
 	public MapUnits(ArrayList<Integer> r){
+
 		size = r.get(0);
 		speed = r.get(1);
 		price = new int[]{10*r.get(2),100*r.get(2)};
+		defAIType = (r.get(3)<=1)?r.get(3):0;
+		difScale = r.get(4);
 	}
 	@Override
 	public void create () {
+		new Help(Gdx.files.internal("Text/landingText.txt").read());
 		//initializing values
 		textures = new Texture[]{new Texture(Gdx.files.internal("sprites/res1.png")),new Texture(Gdx.files.internal("sprites/res2.png")),
 				new Texture(Gdx.files.internal("sprites/homeNode.png")),new Texture(Gdx.files.internal("sprites/defenderGen.png")),
@@ -149,10 +157,12 @@ public class MapUnits extends ApplicationAdapter {
 				//m.size is the size of a square and will be used frequently to place objects on the grid
 				if(m.getVals()[i][j].getType()==1||m.getVals()[i][j].getType()==2){
 					batch.draw(textures[m.getVals()[i][j].getType()-1],i*m.size,j*m.size,m.size,m.size);
+					typeCount++;
 				}else if(m.getVals()[i][j].getType()==-2){
 					batch.draw(textures[2],i*m.size,j*m.size,m.size,m.size);
 				}else if(m.getVals()[i][j].getType()==-3){
 					batch.draw(textures[4],i*m.size,j*m.size,m.size,m.size);
+					typeCount++;
 				}
 			}
 		}
@@ -243,9 +253,12 @@ public class MapUnits extends ApplicationAdapter {
 						i.move();//get closer to the target
 						i.setTime(System.currentTimeMillis());//reset internal clock
 					}
-				}else{
-					i.target = null;//the target does not exist or there is no targer
+				}else if(defAIType==0){
+					i.target = null;//the target does not exist or there is no target
 					i.move(m);//wander movement
+					i.setTime(System.currentTimeMillis());//reset internal clock
+				}else{//alt ai type
+					i.target = null;
 					i.setTime(System.currentTimeMillis());//reset internal clock
 				}
 			}
@@ -280,7 +293,7 @@ public class MapUnits extends ApplicationAdapter {
 				res[1]-=price[1];//subtract the price
 			}
 		}
-		if(System.currentTimeMillis()-startT>10000-difficulty&&w.size()-e.size()>0&&w.size()!=0){//creates enemies
+		if(System.currentTimeMillis()-startT>(10000-difficulty)/difScale&&w.size()-e.size()>0&&w.size()!=0){//creates enemies
 			//will not run if all workers have an enemy
 			startT = System.currentTimeMillis();//resets start time
 			Random r = new Random();//creates a random
@@ -382,6 +395,7 @@ public class MapUnits extends ApplicationAdapter {
 		resMenu.getContentTable().add(resT[0]);
 		resMenu.getContentTable().row();
 		resMenu.getContentTable().add(resT[1]);
+		typeCount=0;
 	}//end game loop
 
 	@Override
