@@ -68,7 +68,11 @@ public class Launcher extends JFrame {
                 r.add(texts[5].getText());
                 r.add(texts[7].getText());
                 r.add(texts[9].getText());
-                r.add(texts[11].getText());
+                if(!texts[11].getText().matches("[a-zA-z]*[^a-zA-z]+[a-zA-z]*")){
+                    r.add(texts[11].getText());
+                }else{
+                    r.add("user");
+                }
                 dispose();
             }
         });
@@ -84,7 +88,11 @@ public class Launcher extends JFrame {
                 r.add(texts[5].getText());
                 r.add(texts[7].getText());
                 r.add(texts[9].getText());
-                r.add(texts[11].getText());
+                if(!texts[11].getText().matches("[a-zA-z]*[^a-zA-z]+[a-zA-z]*")){
+                    r.add(texts[11].getText());
+                }else{
+                    r.add("user");
+                }
 
             }
         });

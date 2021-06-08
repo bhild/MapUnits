@@ -34,7 +34,7 @@ public class Help extends JFrame {
         }
         help.setText(text.replaceAll("_!","\n"));
         sc = new Scanner(l);
-        text="";
+        text="WINNERS!_!";
         while(sc.hasNextLine()){
             text+=sc.nextLine();
         }
