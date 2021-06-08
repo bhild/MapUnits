@@ -1,0 +1,29 @@
+This is a simple game created for my Advanced Java final. The goal is to mine out the map of resources. _!
+There are 2 types: yellow and blue. You can build 1 yellow worker to start. Workers will "mine” a node then return home._!
+ This increments your resource total. You can expend your collected resources to create new workers._!
+  Blue resource is used to build defenders who will seek out attackers and destroy them, at the cost of the defender._!
+   They have 2 AI types: 0, where they wander around the center clearing, and 1, where they stay put after creation.
+_!
+_!
+Game Size - the bigger the number the larger the objects in game
+_!
+Game Speed - the lower this number the faster thing move
+_!
+Cost Scaling - the higher the number the more things cost
+_!
+Defender AI Type - changes the defender AI
+_!
+Attacker Scale - the higher the number the more attackers will generate
+_!_!
+Hot Keys:_!
+R - hides/shows the resource menu_!
+B - hides/shows the build menu_!
+C - functions as pressing the create button in the build menu (works even if the build menu is hidden)_!
+
+Default Costs:_!
+yellow-W = 10 * cost scale (yellow)_!
+blue-W = 100 * cost scale (yellow)_!
+Defender = 100 * cost scale (blue)_!
+Defender gen = 1000 * cost scale (yellow)_!
+
+
