@@ -14,10 +14,10 @@ import java.util.ArrayList;
 
 public class Launcher extends JFrame {
     private int FRAME_WIDTH = 200;
-    private int FRAME_HEIGHT = 300;
+    private int FRAME_HEIGHT = 350;
     private JButton b;
-    private JTextArea[] texts = new JTextArea[10];
-    public Launcher(final ArrayList<Integer> r ) throws FileNotFoundException {
+    private JTextArea[] texts = new JTextArea[12];
+    public Launcher(final ArrayList<String> r ) throws FileNotFoundException {
         setLayout(null);
         setPreferredSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -50,20 +50,25 @@ public class Launcher extends JFrame {
                 texts[8].setText("Attacker Scale");
             }else if(i==9){
                 texts[9].setText("1");
+            }else if(i==10){
+                texts[10].setText("Name");
+            }else if(i==11){
+                texts[11].setText("User");
             }
             this.add(texts[i]);
         }
         b = new JButton();
-        b.setBounds(40,205,60,40);
+        b.setBounds(40,255,60,40);
         b.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                r.add(Integer.parseInt(texts[1].getText()));
-                r.add(Integer.parseInt(texts[3].getText()));
-                r.add(Integer.parseInt(texts[5].getText()));
-                r.add(Integer.parseInt(texts[7].getText()));
-                r.add(Integer.parseInt(texts[9].getText()));
+                r.add(texts[1].getText());
+                r.add(texts[3].getText());
+                r.add(texts[5].getText());
+                r.add(texts[7].getText());
+                r.add(texts[9].getText());
+                r.add(texts[11].getText());
                 dispose();
             }
         });
@@ -74,12 +79,12 @@ public class Launcher extends JFrame {
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-
-                r.add(Integer.parseInt(texts[1].getText()));
-                r.add(Integer.parseInt(texts[3].getText()));
-                r.add(Integer.parseInt(texts[5].getText()));
-                r.add(Integer.parseInt(texts[7].getText()));
-                r.add(Integer.parseInt(texts[9].getText()));
+                r.add(texts[1].getText());
+                r.add(texts[3].getText());
+                r.add(texts[5].getText());
+                r.add(texts[7].getText());
+                r.add(texts[9].getText());
+                r.add(texts[11].getText());
 
             }
         });

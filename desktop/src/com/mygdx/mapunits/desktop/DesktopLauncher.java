@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class DesktopLauncher {
 
 	public static void main (String[] arg) throws InterruptedException {
-		final ArrayList<Integer> run = new ArrayList<>();
+		final ArrayList<String> run = new ArrayList<>();
 		final Runnable r = new Runnable() {
 			@Override
 			public void run() {

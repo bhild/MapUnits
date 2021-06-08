@@ -3,6 +3,7 @@ package com.mygdx.mapunits;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -56,18 +57,21 @@ public class MapUnits extends ApplicationAdapter {
 	int size;
 	int defAIType;
 	int difScale;
+	String name;
 	int typeCount;
-	public MapUnits(ArrayList<Integer> r){
+	public MapUnits(ArrayList<String> r){
 
-		size = r.get(0);
-		speed = r.get(1);
-		price = new int[]{10*r.get(2),100*r.get(2)};
-		defAIType = (r.get(3)<=1)?r.get(3):0;
-		difScale = r.get(4);
+		size = Integer.parseInt(r.get(0));
+		speed = Integer.parseInt(r.get(1));
+		price = new int[]{10*Integer.parseInt(r.get(2)),100*Integer.parseInt(r.get(2))};
+		defAIType = (Integer.parseInt(r.get(3))<=1)?Integer.parseInt(r.get(3)):0;
+		difScale = Integer.parseInt(r.get(4));
+		name = r.get(5);
+
 	}
 	@Override
 	public void create () {
-		new Help(Gdx.files.internal("Text/landingText.txt").read());
+		new Help(Gdx.files.internal("Text/landingText.txt").read(),Gdx.files.local("DataBase/Highscore.txt").read());
 		//initializing values
 		textures = new Texture[]{new Texture(Gdx.files.internal("sprites/res1.png")),new Texture(Gdx.files.internal("sprites/res2.png")),
 				new Texture(Gdx.files.internal("sprites/homeNode.png")),new Texture(Gdx.files.internal("sprites/defenderGen.png")),
@@ -162,7 +166,6 @@ public class MapUnits extends ApplicationAdapter {
 					batch.draw(textures[2],i*m.size,j*m.size,m.size,m.size);
 				}else if(m.getVals()[i][j].getType()==-3){
 					batch.draw(textures[4],i*m.size,j*m.size,m.size,m.size);
-					typeCount++;
 				}
 			}
 		}
@@ -241,7 +244,7 @@ public class MapUnits extends ApplicationAdapter {
 							i.setTarget(j);
 							j.isTarget = true;
 							break;	//ends the for each
-									//i dont have a better way of doing this
+							//i dont have a better way of doing this
 						}
 					}
 				}
@@ -283,7 +286,11 @@ public class MapUnits extends ApplicationAdapter {
 					enemyClear.add(i);
 				}
 			}else{
-				i.target = w.get(new Random().nextInt(w.size()));//if the target is gone get a new one
+				if(w.size()>0){
+					i.target = w.get(new Random().nextInt(w.size()));//if the target is gone get a new one
+				}else{
+					enemyClear.add(i);
+				}
 			}
 		}
 		batch.end();
@@ -395,7 +402,13 @@ public class MapUnits extends ApplicationAdapter {
 		resMenu.getContentTable().add(resT[0]);
 		resMenu.getContentTable().row();
 		resMenu.getContentTable().add(resT[1]);
-		typeCount=0;
+		if(typeCount==0){
+			FileHandle file = Gdx.files.local("DataBase/Highscore.txt");
+			file.writeString("User: "+name+"_!Score: "+(res[0]+res[1]*10)+"_!Size: "+(size)+"_!", true);
+			typeCount--;
+		}else if(typeCount>0){
+			typeCount=0;
+		}
 	}//end game loop
 
 	@Override
